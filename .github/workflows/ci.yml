@@ -6,6 +6,11 @@ on:
       - '*'
 
 jobs:
+  name: Debug
+    run: |
+      echo "GITHUB_REF: $GITHUB_REF"
+      VERSION=$(echo $GITHUB_REF | sed 's/.*\///')
+      echo "VERSION: $VERSION"
   build:
     runs-on: ubuntu-latest
     steps:
