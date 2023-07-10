@@ -31,10 +31,7 @@
 (require 'request)
 (require 'json)
 
-(defcustom shotgrid-url "https://mycompany.shotgridstudio.com/"
-  "The URL of the Shotgrid site."
-  :type 'string
-  :group 'shotgrid)
+(require 'shotgrid-customize)
 
 (defun shotgrid--get-access-token (callback &optional refresh-token)
   "Get the access token from the Shotgrid REST API"
