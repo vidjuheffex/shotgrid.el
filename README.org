@@ -1,0 +1,12 @@
+* Shotgrid.el
+Shotgrid.el is designed to let Shotgrid-developers access their projects, tasks and more, from emacs.
+
+** Features
+- Built with ~completing-read~ to support modern-emacs completion.
+- GPG-Secured Authentication
+
+** Instructions
+- Create a legacy shotgrid login/password and PAT.
+- Use ~customize~ to set your shotgrid-url.
+- Create/or modify an ~.authinfo.gpg~ (recommended) file with the following entry:
+  ~machine shotgrid login <username> password <password>~
