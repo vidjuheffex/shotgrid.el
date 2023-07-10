@@ -6,23 +6,23 @@ on:
       - '*'
 
 jobs:
-  name: Debug
-    run: |
-      echo "GITHUB_REF: $GITHUB_REF"
-      VERSION=$(echo $GITHUB_REF | sed 's/.*\///')
-      echo "VERSION: $VERSION"
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
-      - name: Build package
+
+      - name: Extract version
+        id: extract_version
         run: |
           VERSION=$(echo $GITHUB_REF | sed 's/.*\///')
-          mkdir shotgrid-$VERSION
-          cp src/*.el shotgrid-$VERSION/
-          tar -czvf shotgrid-$VERSION.tar.gz shotgrid-$VERSION/
-      
+          echo "::set-output name=VERSION::$VERSION"
+
+      - name: Build package
+        run: |
+          mkdir shotgrid-${{ steps.extract_version.outputs.VERSION }}
+          cp src/*.el shotgrid-${{ steps.extract_version.outputs.VERSION }}/
+          tar -czvf shotgrid-${{ steps.extract_version.outputs.VERSION }}.tar.gz shotgrid-${{ steps.extract_version.outputs.VERSION }}/
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
