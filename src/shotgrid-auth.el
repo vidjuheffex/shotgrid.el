@@ -1,3 +1,21 @@
+;; -*- lexical-binding: t; -*-
+
+(defun shotgrid--get-user (token)
+  (let ((request-url (concat shotgrid-url "api/v1/entity/HumanUser/_search"))
+        (request-data (json-encode `(("filters" . [[ "email" "is" ,shotgrid-username]])))))
+    (request
+     request-url
+     :type "POST"
+     :headers `(("Authorization" . ,(format "Bearer %s" token))
+                ("Accept" . "application/json")
+                ("Content-Type" . "application/vnd+shotgun.api3_array+json"))
+     :data request-data
+     :parser 'json-read
+     :success (cl-function
+               (lambda (&key data &allow-other-keys)
+                 (message "User: %S" data))))))
+
+
 (defun shotgrid--get-access-token (callback &optional refresh-token)
   "Get the access token from the Shotgrid REST API"
   (let ((credentials (auth-source-search :host shotgrid-auth-source-service
@@ -25,6 +43,7 @@
                         (lambda (&key data &allow-other-keys)
                           (funcall callback
                                    (cons (alist-get 'access_token data) (+ (time-to-seconds) (alist-get 'expires_in data)))
-                                   (cons (alist-get 'refresh_token data) (+ (time-to-seconds) 86400))))))))))))
+                                   (cons (alist-get 'refresh_token data) (+ (time-to-seconds) 86400)))
+                          (shotgrid--get-user (alist-get 'access_token data)))))))))))
 
 (provide 'shotgrid-auth)
