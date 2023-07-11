@@ -6,27 +6,32 @@
   ;; (ey254347sv34 . 6066623)
   ;; (bh234gf23g34 . 6069623)
   (let ((token-pair nil)
-        (refresh-token-pair nil))
+        (refresh-token-pair nil)
+        (shotgrid-current-user nil))
     (lambda (callback)
       (cond
        ;; if access token is valid, use it
        ((and token-pair (< (time-to-seconds) (cdr token-pair)))
-        (funcall callback (car token-pair)))
+        (funcall callback (car token-pair) shotgrid-current-user))
        ;; if refresh token is valid, use it to get new access token
        ((and refresh-token-pair (< (time-to-seconds) (cdr refresh-token-pair)))
         (shotgrid--get-access-token
          (lambda (new-token-pair new-refresh-token-pair)
            (setq token-pair new-token-pair)
            (setq refresh-token-pair new-refresh-token-pair)
-           (funcall callback (car token)))
+           (funcall callback (car token-pair) shotgrid-current-user))
          (car refresh-token)))
-       ;; if neither token is valid, get new access token with password grant
+        ;; if neither token is valid, get new access token with password grant
        (t
         (shotgrid--get-access-token
          (lambda (new-token-pair new-refresh-token-pair)
            (setq token-pair new-token-pair)
            (setq refresh-token-pair new-refresh-token-pair)
-           (funcall callback (car token-pair)))))))))
+           (shotgrid--get-current-user
+            (lambda (user)
+              (setq shotgrid-current-user user)
+              (funcall callback (car token-pair) shotgrid-current-user))
+            (car token-pair)))))))))
 
 (setq shotgrid--use-api (shotgrid--create-api-handler))
 

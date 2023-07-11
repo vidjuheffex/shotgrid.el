@@ -1,6 +1,6 @@
 ;; -*- lexical-binding: t; -*-
 
-(defun shotgrid--get-user (token)
+(defun shotgrid--get-current-user (callback token)
   (let ((request-url (concat shotgrid-url "api/v1/entity/HumanUser/_search"))
         (request-data (json-encode `(("filters" . [[ "email" "is" ,shotgrid-username]])))))
     (request
@@ -13,7 +13,7 @@
      :parser 'json-read
      :success (cl-function
                (lambda (&key data &allow-other-keys)
-                 (message "User: %S" data))))))
+                 (funcall callback data))))))
 
 
 (defun shotgrid--get-access-token (callback &optional refresh-token)
@@ -43,7 +43,6 @@
                         (lambda (&key data &allow-other-keys)
                           (funcall callback
                                    (cons (alist-get 'access_token data) (+ (time-to-seconds) (alist-get 'expires_in data)))
-                                   (cons (alist-get 'refresh_token data) (+ (time-to-seconds) 86400)))
-                          (shotgrid--get-user (alist-get 'access_token data)))))))))))
+                                   (cons (alist-get 'refresh_token data) (+ (time-to-seconds) 86400))))))))))))
 
 (provide 'shotgrid-auth)

@@ -38,7 +38,7 @@
 (cl-defun shotgrid--request (&key (type "GET") (entity nil) (callback nil) (params nil))
   "Make a request to the Shotgrid REST API"
   (funcall shotgrid--use-api
-           (lambda (token)
+           (lambda (token user)
              (let ((request-url (concat shotgrid-url "api/v1/entity/" entity)))
                (request request-url
                  :type type
@@ -118,8 +118,6 @@
                                   (when callback
                                     (funcall callback favorites))))))
   
-
-
 (provide 'shotgrid)
 ;;; shotgrid.el ends here
 
