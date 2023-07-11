@@ -20,7 +20,7 @@
            (setq token-pair new-token-pair)
            (setq refresh-token-pair new-refresh-token-pair)
            (funcall callback (car token-pair) shotgrid-current-user))
-         (car refresh-token)))
+         (car refresh-token-pair)))
         ;; if neither token is valid, get new access token with password grant
        (t
         (shotgrid--get-access-token
